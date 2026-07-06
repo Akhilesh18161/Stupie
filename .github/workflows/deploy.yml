@@ -12,50 +12,14 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build
-      - name: Prepare docs folder
-        run: |
-          mkdir -p docs
-          cp -r .output/public/* docs/
-          JS_FILE=$(ls docs/assets/index-*.js | head -n 1 | xargs basename)
-          CSS_FILE=$(ls docs/assets/styles-*.css | head -n 1 | xargs basename)
-          cat > docs/index.html << EOF
-          <!doctype html>
-          <html lang="en">
-            <head>
-              <meta charset="utf-8" />
-              <meta name="viewport" content="width=device-width, initial-scale=1" />
-              <title>STUDY.NP — NEB Academic Portal</title>
-              <link rel="icon" href="favicon.ico" />
-              <link rel="stylesheet" href="assets/$CSS_FILE" />
-            </head>
-            <body>
-              <noscript>Please enable JavaScript to view the app.</noscript>
-              <script type="module" src="assets/$JS_FILE"></script>
-            </body>
-          </html>
-          EOF
-          cp docs/index.html docs/404.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs/
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
