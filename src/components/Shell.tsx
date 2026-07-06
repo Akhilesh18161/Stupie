@@ -45,7 +45,11 @@ export function Shell({ children }: { children: ReactNode }) {
         </nav>
         <div className="flex items-center gap-4 relative">
           <form
-            onSubmit={(e) => { e.preventDefault(); if (query.trim()) window.location.href = `/curriculum?q=${encodeURIComponent(query)}`; }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!query.trim()) return;
+              window.location.href = `${import.meta.env.BASE_URL ?? "/"}curriculum?q=${encodeURIComponent(query)}`;
+            }}
             className="hidden sm:block"
           >
             <input
